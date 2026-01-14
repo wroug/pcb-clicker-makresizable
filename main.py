@@ -9,7 +9,9 @@ pygame.init()
 screensize = (1280, 720)
 screen = pygame.display.set_mode(screensize)
 clock = pygame.time.Clock()
-pcb_rect = pygame.Rect(1200 / 9, 729 / 3, 200, 300)
+pcb_rect = pygame.Rect(1200/9, 729/3, 300, 300)
+pcb_image = pygame.image.load("pcb.jpg")
+pcb_image = pygame.transform.scale(pcb_image, (300, 300))
 running = True
 pcb = 0
 
@@ -26,15 +28,16 @@ while running:
 
 
     screen.fill("purple")
-    pygame.draw.rect(screen, (0, 255, 0), pygame.Rect(1280/9, 720/3, 200,300))
+    screen.blit(pcb_image, pcb_rect)
 
     # RENDER YOUR GAME HERE
     text_surface = my_font.render(f"{pcb} PCBs", True, (255, 255, 255))
-    screen.blit(text_surface, (50, 50))
+    screen.blit(text_surface, (100, 50))
+
 
     # flip() the display to put your work on screen
     pygame.display.flip()
 
-    clock.tick(15)  # limits FPS to 15
+    clock.tick(30)  # limits FPS to 30
 
 pygame.quit()
