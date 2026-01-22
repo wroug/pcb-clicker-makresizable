@@ -17,6 +17,7 @@ settings_image = pygame.transform.scale(settings_image, (50, 50))
 settings_rect = pygame.Rect(1200, 40, 50, 50)
 menu_open = False # The "Switch" variable
 back_rect = pygame.Rect(50, 50, 150, 50)
+BG_COLOR = (182, 227, 212)
 running = True
 pcb = 0
 
@@ -27,6 +28,12 @@ while running:
         if event.type == pygame.MOUSEBUTTONUP:
             if settings_rect.collidepoint(event.pos):
                 menu_open = True
+
+            if menu_open:
+                settings(screen)
+            else:
+                screen.fill(BG_COLOR)
+                screen.blit(pcb_image, pcb_rect)
 
             if menu_open and back_rect.collidepoint(event.pos):
                 menu_open = False
