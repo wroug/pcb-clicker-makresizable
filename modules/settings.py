@@ -9,3 +9,5 @@ def settings(screen):
     pygame.draw.rect(screen, (20, 60, 40), (50, 150, 1160, 60))
     pygame.draw.rect(screen, (20, 40, 60), (50, 230, 1160, 60))
     pygame.draw.rect(screen, (40, 20, 40), (50, 310, 1160, 60))
+    pygame.draw.line(screen, (100, 100, 100), (50, 220), (1210, 220), 1)
+    pygame.draw.line(screen, (100, 100, 100), (50, 300), (1210, 300), 1)
