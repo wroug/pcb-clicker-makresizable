@@ -1,51 +1,67 @@
 import pygame
-from modules.settings import *
+from modules.settings import settings
 
-# pygame setup
-pygame.font.init()
-my_font = pygame.font.Font("Kavoon-Regular.ttf", 40)
-screen = pygame.display.set_mode((1280, 720))
+# Pygame Setup
 pygame.init()
-screensize = (1280, 720)
-screen = pygame.display.set_mode(screensize)
+pygame.font.init()
+screen = pygame.display.set_mode((1280, 720))
 clock = pygame.time.Clock()
-pcb_rect = pygame.Rect(1280/9, 729/3, 300, 300)
+my_font = pygame.font.Font("Kavoon-Regular.ttf", 40)
+
+# Assets
 pcb_image = pygame.image.load("pcb.jpg")
 pcb_image = pygame.transform.scale(pcb_image, (300, 300))
+pcb_rect = pygame.Rect(1280 / 9, 720 / 3, 300, 300)
+
 settings_image = pygame.image.load('Settings.png')
 settings_image = pygame.transform.scale(settings_image, (50, 50))
 settings_rect = pygame.Rect(1200, 40, 50, 50)
-menu_open = False # The "Switch" variable
+
+# Hitboxes (Using pygame.Rect instead of tuples)
 back_rect = pygame.Rect(50, 50, 150, 50)
-BG_COLOR = (182, 227, 212)
-running = True
+mint_btn = pygame.Rect(50, 150, 1160, 60)
+sky_btn = pygame.Rect(50, 230, 1160, 60)
+sand_btn = pygame.Rect(50, 310, 1160, 60)
+
+# Game Variables
+menu_open = False
+bg_color = (20, 20, 25)  # Initial Dark Color
 pcb = 0
+running = True
 
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+
         if event.type == pygame.MOUSEBUTTONUP:
+            # Check Settings Icon
             if settings_rect.collidepoint(event.pos):
                 menu_open = True
 
+            # Logic while menu is open
             if menu_open:
-                settings(screen)
+                if back_rect.collidepoint(event.pos):
+                    menu_open = False
+
+                # Update background color based on button clicked
+                if mint_btn.collidepoint(event.pos):
+                    bg_color = (20, 60, 40)
+                if sky_btn.collidepoint(event.pos):
+                    bg_color = (20, 40, 60)
+                if sand_btn.collidepoint(event.pos):
+                    bg_color = (40, 20, 40)
+
+            # Logic while game is active
             else:
-                screen.fill(BG_COLOR)
-                screen.blit(pcb_image, pcb_rect)
-
-            if menu_open and back_rect.collidepoint(event.pos):
-                menu_open = False
-
-            if not menu_open:
                 if pcb_rect.collidepoint(event.pos):
                     pcb += 1
 
+    # --- DRAWING ---
     if menu_open:
         settings(screen)
     else:
-        screen.fill("#B2EAD3")
+        screen.fill(bg_color)
         screen.blit(pcb_image, pcb_rect)
         screen.blit(settings_image, settings_rect)
 
