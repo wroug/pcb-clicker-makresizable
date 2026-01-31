@@ -7,6 +7,8 @@ def settings(screen):
     btn_font = pygame.font.Font("Kavoon-Regular.ttf", 40)
 
     pygame.draw.rect(screen, (150, 0, 0), (50, 50, 150, 50), border_radius=5)
+    back_txt = btn_font.render("BACK", True, (200, 200, 200))
+    screen.blit(back_txt, (70, 50))
     pygame.draw.line(screen, (100, 100, 100), (50, 220), (1210, 220), 1)
     pygame.draw.line(screen, (100, 100, 100), (50, 300), (1210, 300), 1)
     text_surface = btn_font.render("Select color: Dark green", True, (200, 200, 200))
