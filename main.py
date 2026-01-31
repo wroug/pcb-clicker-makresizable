@@ -63,7 +63,6 @@ while running:
                 if save_rect.collidepoint(event.pos):
                     import json
 
-                    # Add pcb_per_click to the dictionary
                     data = {
                         "pcb": pcb,
                         "bg": bg_color,
@@ -80,7 +79,8 @@ while running:
                     try:
                         with open("savegame.json", "r") as f:
                             data = json.load(f)
-                            pcb = data["pcb"]
+                            pcb = data.get("pcb", 0)
+                            pcb_per_click = data.get("click_power", 1)
                             bg_color = tuple(data["bg"])
                         print("Game loaded!")
                     except FileNotFoundError:
@@ -107,7 +107,7 @@ while running:
     if menu_open:
         settings(screen)
     elif upgrades_open:
-        upgrades_menu(screen, my_font, pcb)
+        upgrades_menu(screen, my_font, pcb, pcb_per_click)
     else:
         screen.fill(bg_color)
         screen.blit(pcb_image, pcb_rect)
