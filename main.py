@@ -2,11 +2,13 @@ import pygame
 import json
 from modules.settings import settings
 from modules.upgrades import upgrades_menu
+from pygame.locals import *
+
 
 # Pygame Setup
 pygame.init()
 pygame.font.init()
-screen = pygame.display.set_mode((1280, 720))
+screen = pygame.display.set_mode((1280, 720), RESIZABLE)
 clock = pygame.time.Clock()
 my_font = pygame.font.Font("Kavoon-Regular.ttf", 40)
 pcb_image = pygame.image.load("pcb.jpg")
