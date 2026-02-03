@@ -3,7 +3,7 @@ import json
 from modules.settings import settings
 from modules.upgrades import upgrades_menu
 from pygame.locals import *
-
+import modules.saveprotector as sp
 
 # Pygame Setup
 pygame.init()
@@ -83,8 +83,7 @@ while running:
                         "click_power": pcb_per_click,
                         "upg1_cost": auto_solderer_cost,
                     }
-                    with open("savegame.json", "w") as f:
-                        json.dump(data, f)
+                    sp.safesave(data)
                     show_save_text = True
                     save_message_timer = 90
                     print("Game saved!")
@@ -92,15 +91,18 @@ while running:
                 # Import Functionality
                 if import_rect.collidepoint(event.pos):
                     try:
-                        with open("savegame.json", "r") as f:
-                            data = json.load(f)
+
+                        data = sp.safeload()
+                        if sp.safeload():
                             pcb = data.get("pcb", 0)
                             pcb_per_click = data.get("click_power", 1)
                             bg_color = tuple(data["bg"])
                             auto_solderer_cost = data.get("upg1_cost")
-                        show_load_text = True
-                        load_message_timer = 90
-                        print("Game loaded!")
+                            show_load_text = True
+                            load_message_timer = 90
+                            print("Game loaded!")
+                        else:
+                            print("\033[97;101mERROR WITH GAME FILE: CORRUPTED OR TAMPERED WITH\033[0m")
                     except FileNotFoundError:
                         print("No Save file found")
 
