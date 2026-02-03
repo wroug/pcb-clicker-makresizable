@@ -1,7 +1,7 @@
 import pygame
 
 
-def upgrades_menu(screen, my_font, pcb_count, pcb_per_click):
+def upgrades_menu(screen, my_font, pcb_count, pcb_per_click, auto_solderer_cost):
     screen.fill((25, 25, 35))
 
     # Show stats at the top
@@ -13,7 +13,7 @@ def upgrades_menu(screen, my_font, pcb_count, pcb_per_click):
     pygame.draw.rect(screen, (60, 60, 60), button_rect, border_radius=10)
     pygame.draw.rect(screen, (100, 100, 100), button_rect, 2, border_radius=10)
 
-    upg_text = my_font.render("Auto Solderer | Cost: 50 PCBs | +1 PCB/click", True, (200, 200, 200))
+    upg_text = my_font.render(f"Auto Solderer | Cost: {auto_solderer_cost} PCBs | +1 PCB/click", True, (200, 200, 200))
     screen.blit(upg_text, (80, 165))
 
     # Back Button

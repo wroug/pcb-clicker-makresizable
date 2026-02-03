@@ -28,12 +28,18 @@ import_rect = pygame.Rect(50, 530, 1160, 60)
 upgrade_1_rect = pygame.Rect(50, 150, 1180, 80)
 pcb = 0
 pcb_per_click = 1
-upg1_owned = 0
+auto_solderer_cost = 50
 bg_color = (20, 20, 25)
 menu_open = False
 upgrades_open = False
 show_save_text = False
 save_message_timer = 0
+show_load_text = False
+load_message_timer = 0
+show_upg1_bought_text = False
+upg1_bought_message_timer = 0
+show_error_text = False
+error_message_timer = 0
 
 running = True
 
@@ -48,12 +54,18 @@ while running:
                     upgrades_open = False
 
                 if upgrade_1_rect.collidepoint(event.pos):
-                    if pcb >= 50:
-                        pcb -= 50
+                    if pcb >= auto_solderer_cost:
+                        pcb -= auto_solderer_cost
                         pcb_per_click += 1
-                        print("Upgrade Purchased!")
+                        auto_solderer_cost = int(auto_solderer_cost * 1.15)
+                        show_upg1_bought_text = True
+                        upg1_bought_message_timer = 90
+                        print(f"Upgrade Purchased! Next solderer will be {auto_solderer_cost}!")
                     else:
+                        show_error_text = True
+                        error_message_timer = 90
                         print("Not enough PCBs.")
+                    
 
             elif menu_open:
                 if back_rect.collidepoint(event.pos):
@@ -66,7 +78,8 @@ while running:
                     data = {
                         "pcb": pcb,
                         "bg": bg_color,
-                        "click_power": pcb_per_click
+                        "click_power": pcb_per_click,
+                        "upg1_cost": auto_solderer_cost,
                     }
                     with open("savegame.json", "w") as f:
                         json.dump(data, f)
@@ -82,6 +95,9 @@ while running:
                             pcb = data.get("pcb", 0)
                             pcb_per_click = data.get("click_power", 1)
                             bg_color = tuple(data["bg"])
+                            auto_solderer_cost = data.get("upg1_cost")
+                        show_load_text = True
+                        load_message_timer = 90
                         print("Game loaded!")
                     except FileNotFoundError:
                         print("No Save file found")
@@ -107,7 +123,7 @@ while running:
     if menu_open:
         settings(screen)
     elif upgrades_open:
-        upgrades_menu(screen, my_font, pcb, pcb_per_click)
+        upgrades_menu(screen, my_font, pcb, pcb_per_click, auto_solderer_cost)
     else:
         screen.fill(bg_color)
         screen.blit(pcb_image, pcb_rect)
@@ -118,13 +134,30 @@ while running:
         text_surface = my_font.render(f"{pcb} PCBs", True, (255, 255, 255))
         screen.blit(text_surface, (100, 50))
 
-        # Save Message Notification
+        # Save message notification
         if show_save_text and save_message_timer > 0:
             msg_surf = my_font.render("GAME SAVED!", True, (0, 255, 100))
             screen.blit(msg_surf, (500, 600))
             save_message_timer -= 1
         elif save_message_timer <= 0:
             show_save_text = False
+
+        # Load message notification
+        if show_load_text and load_message_timer > 0:
+            msg_surf = my_font.render("Game loaded!", True, (0, 255, 100))
+            screen.blit(msg_surf, (500, 600))
+            load_message_timer -= 1
+        elif load_message_timer <= 0:
+            show_load_text = False
+
+        # Upgrade bought message timer
+        if show_upg1_bought_text and upg1_bought_message_timer > 0:
+            msg_surf = my_font.render(f"Auto solderer bought! Next Solderer will be {auto_solderer_cost}", True, (0, 255, 100))
+            screen.blit(msg_surf, (175, 600))
+            load_message_timer -= 1
+        elif upg1_bought_message_timer <= 0:
+            show_upg1_bought_text = False
+
 
     pygame.display.flip()
     clock.tick(30)
