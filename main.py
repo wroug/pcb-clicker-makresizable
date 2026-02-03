@@ -59,7 +59,7 @@ while running:
                     if pcb >= auto_solderer_cost:
                         pcb -= auto_solderer_cost
                         pcb_per_click += 1
-                        auto_solderer_cost = int(auto_solderer_cost * 1.15)
+                        auto_solderer_cost = int(auto_solderer_cost * 1.5)
                         show_upg1_bought_text = True
                         upg1_bought_message_timer = 90
                         print(f"Upgrade Purchased! Next solderer will be {auto_solderer_cost}!")
@@ -156,7 +156,7 @@ while running:
         if show_upg1_bought_text and upg1_bought_message_timer > 0:
             msg_surf = my_font.render(f"Auto solderer bought! Next Solderer will be {auto_solderer_cost}", True, (0, 255, 100))
             screen.blit(msg_surf, (175, 600))
-            load_message_timer -= 1
+            upg1_bought_message_timer -= 1
         elif upg1_bought_message_timer <= 0:
             show_upg1_bought_text = False
 
