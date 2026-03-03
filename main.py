@@ -29,6 +29,8 @@ save_rect = pygame.Rect(50, 450, 1160, 60)
 import_rect = pygame.Rect(50, 530, 1160, 60)
 upgrade_1_rect = pygame.Rect(50, 150, 1180, 80)
 pcb = 0
+pcb_per_second = 0
+last_update_time = pygame.time.get_ticks()
 pcb_per_click = 1
 auto_solderer_cost = 50
 bg_color = (20, 20, 25)
@@ -46,6 +48,12 @@ error_message_timer = 0
 running = True
 
 while running:
+
+    current_time = pygame.time.get_ticks()
+    if current_time - last_update_time >= 1000:
+        pcb += pcb_per_second
+        last_update_time = current_time
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -58,7 +66,7 @@ while running:
                 if upgrade_1_rect.collidepoint(event.pos):
                     if pcb >= auto_solderer_cost:
                         pcb -= auto_solderer_cost
-                        pcb_per_click += 1
+                        pcb_per_second += 1
                         auto_solderer_cost = int(auto_solderer_cost * 1.5)
                         show_upg1_bought_text = True
                         upg1_bought_message_timer = 90
@@ -82,6 +90,7 @@ while running:
                         "bg": bg_color,
                         "click_power": pcb_per_click,
                         "upg1_cost": auto_solderer_cost,
+                        "PCB/sec": pcb_per_second,
                     }
                     sp.safesave(data)
                     show_save_text = True
@@ -98,6 +107,7 @@ while running:
                             pcb_per_click = data.get("click_power", 1)
                             bg_color = tuple(data["bg"])
                             auto_solderer_cost = data.get("upg1_cost")
+                            pcb_per_second = data.get("PCB/sec", 0)
                             show_load_text = True
                             load_message_timer = 90
                             print("Game loaded!")
@@ -127,7 +137,7 @@ while running:
     if menu_open:
         settings(screen)
     elif upgrades_open:
-        upgrades_menu(screen, my_font, pcb, pcb_per_click, auto_solderer_cost)
+        upgrades_menu(screen, my_font, pcb, pcb_per_second, auto_solderer_cost)
     else:
         screen.fill(bg_color)
         screen.blit(pcb_image, pcb_rect)
@@ -161,6 +171,14 @@ while running:
             upg1_bought_message_timer -= 1
         elif upg1_bought_message_timer <= 0:
             show_upg1_bought_text = False
+
+        # Error message
+        if show_error_text and error_message_timer > 0:
+            msg_surf = my_font.render("Not enough PCBs.", True, (0, 255, 100))
+            screen.blit(msg_surf, (175, 600))
+            error_message_timer -= 1
+        elif error_message_timer <= 0:
+            show_error_text = False
 
 
     pygame.display.flip()
