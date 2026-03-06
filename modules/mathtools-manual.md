@@ -8,8 +8,8 @@
 
 ### Usage for percent-to-width/`ptw()`:  
 `ptc(percent, width)`
-`percent` is an integrer to show where on width to get.
-`width` is an integrer showing the width of the line
+`percent` is an integer to show where on width to get.
+`width` is an integer showing the width of the line
 `ptw()` returns an integrer
 
 import using `from modules.percenttools import ptc, ptw`
