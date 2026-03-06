@@ -28,11 +28,13 @@ sand_btn = pygame.Rect(50, 310, 1160, 60)
 save_rect = pygame.Rect(50, 450, 1160, 60)
 import_rect = pygame.Rect(50, 530, 1160, 60)
 upgrade_1_rect = pygame.Rect(50, 150, 1180, 80)
+upgrade_2_rect = pygame.Rect(50, 250, 1180, 120)
 pcb = 0
 pcb_per_second = 0
 last_update_time = pygame.time.get_ticks()
 pcb_per_click = 1
 auto_solderer_cost = 50
+mechanical_arm_cost = 100
 bg_color = (20, 20, 25)
 menu_open = False
 upgrades_open = False
@@ -41,9 +43,12 @@ save_message_timer = 0
 show_load_text = False
 load_message_timer = 0
 show_upg1_bought_text = False
+show_upg2_bought_text = False
 upg1_bought_message_timer = 0
+upg2_bought_message_timer = 0
 show_error_text = False
 error_message_timer = 0
+
 
 running = True
 
@@ -70,6 +75,19 @@ while running:
                         error_message_timer = 90
                         print("Not enough PCBs.")
 
+                if upgrade_2_rect.collidepoint(event.pos):
+                    if pcb >= mechanical_arm_cost:
+                        pcb -= mechanical_arm_cost
+                        pcb_per_second += 4
+                        mechanical_arm_cost = int(mechanical_arm_cost * 1.5)
+                        show_upg2_bought_text = True
+                        upg2_bought_message_timer = 90
+                        print(f"Upgrade Purchased! Next mechanical arm will be {mechanical_arm_cost}!")
+                    else:
+                        show_error_text = True
+                        error_message_timer = 90
+                        print("Not enough PCBs.")
+
 
             elif menu_open:
                 if back_rect.collidepoint(event.pos):
@@ -85,6 +103,7 @@ while running:
                         "click_power": pcb_per_click,
                         "pcb_per_second": pcb_per_second,
                         "upg1_cost": auto_solderer_cost,
+                        "upg2_cost": mechanical_arm_cost,
                     }
                     sp.safesave(data)
                     show_save_text = True
@@ -102,6 +121,7 @@ while running:
                             bg_color = tuple(data["bg"])
                             pcb_per_second = data.get("pcb__per_second", 1)
                             auto_solderer_cost = data.get("upg1_cost")
+                            mechanical_arm_cost = data.get("upg2_cost")
                             show_load_text = True
                             load_message_timer = 90
                             print("Game loaded!")
@@ -136,7 +156,7 @@ while running:
     if menu_open:
         settings(screen)
     elif upgrades_open:
-        upgrades_menu(screen, my_font, pcb, pcb_per_click, auto_solderer_cost)
+        upgrades_menu(screen, my_font, pcb, pcb_per_click, auto_solderer_cost, mechanical_arm_cost)
     else:
         screen.fill(bg_color)
         screen.blit(pcb_image, pcb_rect)
@@ -171,6 +191,14 @@ while running:
             upg1_bought_message_timer -= 1
         elif upg1_bought_message_timer <= 0:
             show_upg1_bought_text = False
+
+        if show_upg2_bought_text and upg2_bought_message_timer > 0:
+            msg_surf = my_font.render(f"Mechanical arm bought! Next mech arm will be {mechanical_arm_cost}", True,
+                                      (0, 255, 100))
+            screen.blit(msg_surf, (175, 600))
+            upg2_bought_message_timer -= 1
+        elif upg2_bought_message_timer <= 0:
+            show_upg2_bought_text = False
 
     pygame.display.flip()
     clock.tick(30)
